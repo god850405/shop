@@ -17,6 +17,10 @@ git add -A
 
 git commit -m 'deploy'
 
+set http_proxy=http://10.253.1.253:3128
+
+set https_proxy=https://10.253.1.253:3128
+
 # 部署到 https://github.com/god850405/shop.git   分支為 gh-pages
 
 git push -f https://github.com/god850405/shop.git master:gh-pages
