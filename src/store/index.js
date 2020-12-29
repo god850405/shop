@@ -6,14 +6,16 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
   state: {
-    user: null, //使用者名稱
-    token: null, //使用者 Access Token
-    name: null, //尚未定義
-    //--購物車清單
+    token: null,// Token
+    user: null, // 信箱
+    name: null, // 名稱
+    //--購物車
     items: [],
     itemsCount:0,
+    //--側邊選單
+    sideList:[],
     //-- filterlist 篩選方式
-    filterString: "1",
+    filterString: "99",
     // 暫存訂單
     order:{
       OrdererEmail:'',
@@ -55,28 +57,14 @@ const store = new Vuex.Store({
       state.itemsCount--
     },
     cartInsert(state, data) {
-      if (
-        (data.ProductSpecification == null) |
-        (data.ProductMeasurement == null)
-      ) {
-        var item = {
-          ProductNo: data.ProductNo,
-          ProductTitle: data.ProductTitle,
-          ProductSpecification: "未選",
-          ProductMeasurement: "未選",
-          ProductQuantity: 1,
-          ProductPrice: data.ProductPrice
-        };
-      } else {
-        var item = {
-          ProductNo: data.ProductNo,
-          ProductTitle: data.ProductTitle,
-          ProductSpecification: data.ProductSpecification,
-          ProductMeasurement: data.ProductMeasurement,
-          ProductQuantity: 1,
-          ProductPrice: data.ProductPrice
-        };
-      }
+      var item = {
+        ProductNo: data.ProductNo,
+        ProductTitle: data.ProductTitle,
+        ProductSpecification: (data.ProductSpecification!=null) ? data.ProductSpecification : '未選',
+        ProductMeasurement: (data.ProductMeasurement!=null) ? data.ProductMeasurement : '未選',
+        ProductQuantity: (data.ProductQuantity!=null) ? data.ProductQantity : 1,
+        ProductPrice: data.ProductPrice
+      };
       state.items.push(item);
       state.itemsCount++
     },
@@ -84,7 +72,7 @@ const store = new Vuex.Store({
     setFilterString(state, data) {
       state.filterString = data;
     },
-    //登入成功, USER_ID儲存在在STATE.USER
+    //-- 完成訂單後，暫存訂單資訊
     setOrder(state, data) {
         state.order.OrdererEmail    =  data.order.OrdererEmail
         state.order.OrdererName     =  data.order.OrdererName
@@ -111,6 +99,9 @@ const store = new Vuex.Store({
         state.order.RecipientName=''
         state.order.RecipientPhone=''
         state.order.RecipientAddess=''
+    },
+    setSideList(state, data) {
+      state.sideList = data;
     },
   },
   getters: {}

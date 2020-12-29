@@ -16,7 +16,7 @@ export default new Router({
       component:itemlist
     },
     {
-      path: '/itemlist',
+      path: '/itemlist/:str',
       name:'itemlist',
       component:itemlist
     },
@@ -29,9 +29,9 @@ export default new Router({
     {
       path: '/cart',
       name:'cart',
-      // meta: { 
-      //   requiresAuth: true 
-      // },
+      meta: { 
+        requiresAuth: true 
+      },
       component:cart
     }
     ,

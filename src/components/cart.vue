@@ -4,7 +4,13 @@
             <b-tabs  v-model="tabIndex" card v-on:activate-tab="tabActivated">
                 <b-tab title="步驟一"  active>
                     <b-card header="確認商品數量及規格">
-                        <b-table  :items="cartitems" :fields="cartfields"  >
+                        <b-table  :items="cartitems" :fields="cartfields"  :busy="tableBusy">
+                            <template #table-busy>
+                                <div class="text-center text-danger my-2">
+                                        <b-spinner class="align-middle"></b-spinner>
+                                        <strong>Loading...</strong>
+                                </div>
+                            </template>
                             <template #cell(ProductTitle)="row">
                                 <router-link 
                                     :to="{name:'item',params:{id:row.item.ProductNo}}">
@@ -14,10 +20,9 @@
                             <template #cell(ProductSpecification)="row">
                                 <b-form-select 
                                     v-model="row.item.ProductSpecification" 
-                                    v-bind:change="specificationChange(row.index)"
-                                    >
+                                    v-bind:change="specificationChange(row.index)">
                                         <b-form-select-option :value="s.ItemSpecification" v-for="(s,i) in specification[row.index]" :key=i>
-                                        {{s.ItemSpecification}}
+                                            {{s.ItemSpecification}}
                                         </b-form-select-option>
                                 </b-form-select>
                             </template>
@@ -232,13 +237,14 @@ export default {
             tabIndex: 0, 
             stepTwoValidate:false,
             //-----第一步
+            tableBusy:false,
             cartfields: [
-                { key: 'ProductNo', label: '商品編號',sortable:true,class: 'field-center'},
-                { key: 'ProductTitle', label: '名稱',sortable:true,},
+                { key: 'ProductNo', label: '商品編號',class: 'field-center'},
+                { key: 'ProductTitle', label: '名稱',},
                 { key: 'ProductSpecification', label: '規格',class:'field-center'},
                 { key: 'ProductMeasurement', label: '尺寸',class:'field-center'},
                 { key: 'ProductQuantity', label: '數量',class: 'field-center'},
-                { key: 'ProductPrice',label: '單價',sortable:true, class: 'field-center'},
+                { key: 'ProductPrice',label: '單價', class: 'field-center'},
                 { key: 'actions', label: '動作' ,class:'field-center'}
             ],
             specification:[],
@@ -304,6 +310,7 @@ export default {
         //------第三步
     
     },mounted() {
+        this.tableBusy = true
         this.User.email = this.$store.state.user
         this.User.name = this.$store.state.name
         
@@ -314,32 +321,42 @@ export default {
                     this.specification.push(response.data)
                 });
         })
+        this.tableBusy = false
     }
     ,methods:{
         tabActivated(newTabIndex,oldTabIndex, event){ 
+            if(oldTabIndex==0 && newTabIndex==2){
+                event.preventDefault();
+            }
             if(oldTabIndex==1){
                 if(!this.stepTwoValidate&&newTabIndex==2){
                     event.preventDefault();
                 }
             }
-            console.log(`new : ${newTabIndex} , old : ${oldTabIndex}`)
         },
         
         //-----第一步
          //  選擇規格後 顯示 Item 裡相對應的尺寸資料
         specificationChange(i){
+            this.tableBusy = true
             var item = this.$store.state.items[i]
             //console.log(`NO : ${item.ProductNo} SPE  ${item.ProductSpecification}`)
             if(item.ProductNo!=null&&item.ProductSpecification!='未選'){
                 this.$http.get(`https://localhost:44394/Product/GetItemMeasurement?no=${item.ProductNo}&specification=${item.ProductSpecification}`)
                 .then(response => {
-                this.measurement.push(response.data);
+                    // this.measurement[i] = response.data;
+                    this.$set(this.measurement,i,response.data)
                 });
             }
+            this.tableBusy = false
         },
         cancelCart(index){
+            this.tableBusy = true
             // 被取消的 row.index 
             this.$store.commit("cartDelete",index)
+            this.specification.splice(index,1)
+            this.measurement.splice(index,1)
+            this.tableBusy = false
         },
         //----第二步
         countrychanged_user(list){
