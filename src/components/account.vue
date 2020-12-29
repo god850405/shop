@@ -163,7 +163,6 @@ export default {
                 this.login.email = this.user.email
                 this.login.password = this.user.password
                 this.OnLogin()
-                // this.$root.$emit('bv::hide::modal', 'modal')
               }else{
                 this.makeToast('註冊失敗')
               }

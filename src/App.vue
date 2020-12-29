@@ -1,10 +1,10 @@
 <template>
   <div id="app">
     <div class="header">
-      <b-navbar toggleable="sm"  variant="light" class="header-navbar">
+      <b-navbar  variant="light" class="header-navbar">
         <b-navbar-brand>
-          <b-button v-b-toggle.sidebar variant="light">
-            <b-icon icon="grid1x2-fill"></b-icon>
+          <b-button v-b-toggle.sidebar variant="Info" size="lg">
+            <b-icon icon="list"></b-icon>
           </b-button>
           <router-link to="/" >購物網站</router-link>
           </b-navbar-brand>
@@ -57,30 +57,30 @@
     <div class="footer">
         <center><p>Author:Marcus<br>Email:god850405@gmail.com</p></center>
     </div>
-    <!---------------  左側選單  -------------------->
-    <b-sidebar id="sidebar" aria-labelledby="sidebartitle" shadow>
-      <b-list-group>
-        <b-list-group-item 
-        v-for="category in  categories"
-        :key="category.CategoryNo"
-        @click="categorySelected(category.CategoryNo)"
-        href="#"
-        v-b-toggle.sidebar>
-        {{category.CategoryName}}
-        </b-list-group-item>
-      </b-list-group>
+    <b-sidebar  id="sidebar" aria-labelledby="sidebartitle" no-header-close shadow>
+      <!---------------  左側選單  -------------------->
+        <template #default="{ hide }">
+              <div class="d-flex bg-dark text-light align-items-center px-3 py-2">
+                  <b-button variant="transparent" @click="hide" style="width:100vh">
+                    <b-icon icon="arrow-left-circle-fill" variant="light"></b-icon>
+                    <span style="color:#eee;">隱藏</span>
+                  </b-button>
+              </div>
+              <sidebar></sidebar>
+        </template>
+      
     </b-sidebar>
   </div>
 </template>
 
 <script>
 import account from "./components/account.vue";
+import sidebar from "./components/sidebar.vue";
 import * as types from '@/types'
 export default {
   name: "App",
   data(){
     return{
-      categories:[],
         fields: [
           {key: 'ProductNo', label: '商品編號',class: 'field-center'},
           { key: 'ProductTitle', label: '名稱'},
@@ -92,12 +92,8 @@ export default {
         ]
     }
   },components:{
-    account
-  },mounted(){
-    this.$http.get('https://localhost:44394/Product/GetCategory')
-        .then(response => {
-            this.categories = response.data;
-        });
+    account,
+    sidebar
   }
   ,computed:{
     items(){
@@ -142,12 +138,6 @@ export default {
       // 被取消的 row.index 
       console.log(`取消第 (${index}) 筆` );  
       this.$store.commit("cartDelete",index)
-    },
-    categorySelected(i){
-      this.$router.push({
-          name:'itemlist'
-      }).catch(err => {console.log(err)})
-      this.$store.commit("setFilterString",i)
     }
   }
 }
@@ -183,15 +173,6 @@ html,body{
     color: rgb(53, 53, 53);
 }
 
-a, a:link, a:visited{
-  color: #3490C5;
-  text-decoration: none
-}
-#sidebar a:hover{
-  color:#eee;
-  background-color: #3490C5;
-  text-decoration: none;
-}
 .popoverCart{
   max-width: 800px; 
 }

@@ -74,6 +74,7 @@
 export default {
   data(){
       return{
+        // ---routere接收的參數------
         items:[], 
          //-- pagination 用參數
         currentPage:'1',// 目前頁數
@@ -83,6 +84,12 @@ export default {
         //--itemlist 上方篩選器
         sortMethod:'', // itemlist 排序方式，空 => 不排序
         searchString:''
+      }
+    },watch:{
+      $route(now){ 
+        if(this.$route.params.str=='login'){
+            this.$root.$emit('bv::show::modal', 'modal')
+          }
       }
     } ,mounted() {
         this.$http.get('https://localhost:44394/Product/GetProduct')
@@ -103,23 +110,32 @@ export default {
         });
         return sum
       },
-      sortlist(){  // 排序過後的 新LIST
-
-      }, 
+      /*
+      itemNo:99,itemName:'所有商品
+      itemNo:2,itemName:'保暖衣物
+      itemNo:3,itemName:'百搭外套
+      itemNo:4,itemName:'百搭襯衫
+      itemNo:5,itemName:'百搭上衣
+      itemNo:6,itemName:'百搭褲款
+      itemNo:7,itemName:'鞋包配件
+      itemNo:66,itemName:'優惠專區
+      itemNo:88,itemName:'活動特區
+      * */
 
       filterlist(){ //篩選過後的 新LIST
-        if(this.$store.state.filterString=='1'){  //暫無功能
+        if(this.$store.state.filterString=='99'){   //所有商品
           return this.initList(this.initSort(this.items))
-        }else if(this.$store.state.filterString=='2'){   //所有商品
-          return this.initList(this.initSort(this.items))
-        }else if(this.$store.state.filterString=='8'){
+        }else if(this.$store.state.filterString=='66'){
           var filterlist = this.items.filter(item => {  //篩選出所有優惠中商品
             return item.OnSale===1
           })
           return this.initList(this.initSort(filterlist))
+        }else if(this.$store.state.filterString=='88'){
+            //尚未有功能
+            console.log('活動特區')
         }else{
           var filterlist = this.items.filter(item => { //衣著分類 
-            return item.CategoryNo===this.$store.state.filterString
+            return item.CategoryNo=== this.$store.state.filterString 
           })
           return this.initList(this.initSort(filterlist)) //先做完 「篩選」 再做「分頁處理」
         }
@@ -134,6 +150,8 @@ export default {
               type:"cartInsert", 
               ProductNo: items.ProductNo,
               ProductTitle:items.ProductTitle,
+              ProductSpecification:'未選',
+              ProductMeasurement:'未選',
               ProductPrice:items.ProductPrice
           })
         }

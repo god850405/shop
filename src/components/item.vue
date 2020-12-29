@@ -73,8 +73,8 @@
                 <b-form-spinbutton 
                   id="sb-inline" 
                   v-model="quantity" 
-                  size="sm" 
-                  inline>
+                  min="1" max="100"
+                  size="sm">
                 </b-form-spinbutton>
                 </b-col>
             </b-row>
@@ -142,6 +142,7 @@ export default {
             ProductNo: this.items.ProductNo,
             ProductTitle:this.items.ProductTitle,
             ProductPrice:this.items.ProductPrice,
+            ProductQantity:this.quantity,
             ProductSpecification:this.specificationselected,
             ProductMeasurement:this.measurementselected
         })
