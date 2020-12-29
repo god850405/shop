@@ -75,6 +75,10 @@ export default {
   data(){
       return{
         // ---routere接收的參數------
+<<<<<<< HEAD
+=======
+        loginStr:this.$route.params.str,  
+>>>>>>> 4c9f867047cc3972ed7fbba9c964a78b9501f91e
         items:[], 
          //-- pagination 用參數
         currentPage:'1',// 目前頁數
@@ -86,10 +90,22 @@ export default {
         searchString:''
       }
     },watch:{
+<<<<<<< HEAD
       $route(now){ 
         if(this.$route.params.str=='login'){
             this.$root.$emit('bv::show::modal', 'modal')
           }
+=======
+      loginStr:{
+        handler:function(val,oldval) {
+          console.log(`Change (${val})  && (${oldval})`)
+          if(val=='login'){
+            this.$root.$emit('bv::show::modal', 'modal')
+          }
+        },
+        deep:true,
+        immediate:true
+>>>>>>> 4c9f867047cc3972ed7fbba9c964a78b9501f91e
       }
     } ,mounted() {
         this.$http.get('https://localhost:44394/Product/GetProduct')
